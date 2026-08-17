@@ -1,15 +1,33 @@
-# AKM — Agent Operating Instructions
+# AKM - Codex Operating Instructions
 
-This repository is an AKM (Agent Knowledge Management) instance, and you are at its root. All paths below are relative to this directory.
+This repository is the Codex operating and knowledge layer for the owner. Codex is the only active agent runtime. Generic adapters and compatibility files remain available but are not part of the default read path.
 
-- When you need knowledge, context, or procedures, first read `99-system/INDEX.md` and all files in `40-memory/` (both are short)
-- Lookup: INDEX → layer folder (`20-knowledge/` knowledge, `30-context/` context, `50-procedures/` procedures)
-- Before saving any knowledge, experience, or procedure, follow the classification tree in `99-system/ROUTER.md`. Never save to arbitrary locations
-- **Inbox-first**: every new note/intake (notes, cron outputs, collected material) lands in `00-inbox/` first and stays up to 7 days. Do NOT write straight into a final layer. A weekly inbox triage job sweeps items past 7 days into the correct layer via `99-system/ROUTER.md`. Exception: `10-sources/` originals that are explicitly archival, and `60-actions/runs/` execution logs, may be written directly.
-- For bounded multi-step or artifact-producing work that needs an execution contract, copy `99-system/templates/task-contract.md` and run `node scripts/lint.mjs --task-contract <contract>` before execution
-- Before marking durable, public, or high-stakes work complete, select and apply the Tier 0–3 checks in `99-system/VERIFICATION.md`
-- On task failure or repeated mistakes, follow the Learn Back mapping table in `99-system/LOOP.md`: record under `70-evaluation/` and fix the designated layer
-- Never modify originals in `10-sources/`. Update `99-system/INDEX.md` when adding or removing notes, and append one line to `99-system/LOG.md` for meaningful changes
-- New notes follow the frontmatter standard in `99-system/SCHEMA.md`; use the templates in `99-system/templates/`
+## Startup and retrieval
 
-To use AKM from outside this directory, install an adapter snippet: see `adapters/README.md`.
+- At the start of knowledge, context, or procedure work, read `99-system/INDEX.md`, `99-system/INDEX.local.md` when present, and all files in `40-memory/`.
+- For Alleyhair work, read `00-inbox/codex-alleyhair-operating-profile-20260817/README.md` and then only the linked context or procedure needed for the task.
+- Retrieve progressively: root index -> layer index -> topic index -> target note. Do not load an entire layer. If the indexes do not produce a candidate, use `rg` over filenames, frontmatter descriptions, tags, and then bodies.
+- Treat generated `INDEX.local.md` files as disposable routing views. Canonical knowledge remains in Markdown notes and original sources.
+
+## Source boundary
+
+- `D:\heirshop` is the authoritative external source store for Alleyhair originals such as field notes, photos, and existing publication material.
+- `D:\akm` stores pointers, context, reusable knowledge, procedures, content state, verification, and selected outputs. Do not copy or move the full external source library into AKM unless the user explicitly asks.
+- Never modify originals in `10-sources/` or external source originals.
+
+## Writing and execution
+
+- Before saving, follow `99-system/ROUTER.md`. New notes and intake land in `00-inbox/` first and stay there for up to 7 days. Explicit archival originals may go to `10-sources/`; reproducible run logs may go to `60-actions/runs/`.
+- For bounded artifact-producing work, copy `99-system/templates/task-contract.md` and pass `node scripts/lint.mjs --task-contract <contract>` before implementation.
+- For Alleyhair content, maintain one canonical content record and link every Instagram, Naver Blog, Naver Place, or website variant from it. Do not duplicate the canonical body across platform folders.
+- Keep human approval before publication. Record publication URL and date once in the canonical content record, then Learn Back only reusable corrections.
+- Before marking durable, public, or high-stakes work complete, apply the tier in `99-system/VERIFICATION.md`.
+- On failure or repeated mistakes, follow `99-system/LOOP.md`: record the recurring issue under `70-evaluation/` and fix the designated layer.
+- Update `99-system/INDEX.md` or `99-system/INDEX.local.md` when notes are added or removed, and append one concise line to `99-system/LOG.md` for meaningful changes.
+- New managed notes follow `99-system/SCHEMA.md`; never store secret values.
+
+## Local indexing
+
+- Generate hierarchical local indexes with:
+  `node scripts/index.mjs --write --hierarchical --layers 20-knowledge,30-context,50-procedures,60-actions,70-evaluation,80-outputs`
+- Parent indexes point to child indexes; leaf indexes list individual notes. Empty directories do not receive generated indexes.

@@ -354,6 +354,8 @@ export function resolveMarkdownHref(root, fromFile, href) {
 export function layerNotes(root) {
   return walk(root).filter((file) => {
     if (!file.endsWith('.md')) return false;
+    const name = basename(file);
+    if (name === 'INDEX.local.md' || name === 'index.md') return false;
     const top = posixRel(root, file).split('/')[0];
     return top in LAYER_BY_DIR || top === '90-archive';
   });
